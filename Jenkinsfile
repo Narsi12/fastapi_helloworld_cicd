@@ -42,15 +42,17 @@ pipeline {
         }
  
         stage('Deploy Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        // Additional steps (if needed) before pushing the image
-                        dockerImage.push('latest')
-                     // Tag with Jenkins build number
-                    }
-                }
-            }
+    steps {
+        script {
+            // Login to Docker Hub
+            sh "docker login -u narsimha2580 -p Narsimha123@#$"
+
+            // Push the image
+            sh "docker push ${imagename}:latest"
+        }
+    }
+}
+
         }
     }
 }
