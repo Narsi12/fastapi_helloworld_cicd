@@ -1,7 +1,7 @@
 pipeline {
     environment {
         imagename = "narsimha2580/jenkinss"
-        registryCredential = credentials('dckr_pat_i3YdTlJbTQkL1TpMUpj5RVCTPz8')
+        registryCredential = 'dckr_pat_i3YdTlJbTQkL1TpMUpj5RVCTPz8'
         dockerImage = ''
         containerName = 'my-container'
     }
