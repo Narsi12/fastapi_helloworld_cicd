@@ -44,7 +44,7 @@ pipeline {
             steps {
                 script {
                     // Login to Docker Hub
-                    sh "docker login -u narsimha2580 -p Narsimha123@#$"
+                    sh "docker login -u narsimha2580 -p Narsimha123@#\$"
 
                     // Push the image
                     sh "docker push ${imagename}:latest"
