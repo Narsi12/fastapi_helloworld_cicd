@@ -31,13 +31,15 @@ pipeline {
         }
  
         stage('Deploy Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', registryCredential) {
-                        dockerImage.push('latest')
-                    }
-                }
+    steps {
+        script {
+            docker.withRegistry('https://index.docker.io/v1/', registryCredential) {
+                dockerImage.push('latest')
+                dockerImage.push("${imagename}:${BUILD_NUMBER}") // Tag with Jenkins build number
             }
         }
+    }
+}
+
     }
 }
