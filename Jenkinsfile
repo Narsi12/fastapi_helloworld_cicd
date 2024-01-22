@@ -1,20 +1,19 @@
 pipeline {
     environment {
         imagename = "narsimha2580/jenkinss"
-        registryCredential = 'dckr_pat_i3YdTlJbTQkL1TpMUpj5RVCTPz8'
         dockerImage = ''
         containerName = 'my-container'
     }
- 
+
     agent any
- 
+
     stages {
         stage('Cloning Git') {
             steps {
                 git([url: 'https://github.com/Narsi12/fastapi_helloworld_cicd.git', branch: 'main'])
             }
         }
- 
+
         stage('Building image') {
             steps {
                 script {
@@ -22,7 +21,7 @@ pipeline {
                 }
             }
         }
- 
+
         stage('Running image') {
             steps {
                 script {
@@ -40,21 +39,17 @@ pipeline {
                 }
             }
         }
- 
+
         stage('Deploy Image') {
-    steps {
-        script {
-            // Login to Docker Hub
-            sh "docker login -u narsimha2580 -p Narsimha123@#$"
+            steps {
+                script {
+                    // Login to Docker Hub
+                    sh "docker login -u narsimha2580 -p Narsimha123@#$"
 
-            // Push the image
-            sh "docker push ${imagename}:latest"
+                    // Push the image
+                    sh "docker push ${imagename}:latest"
+                }
+            }
         }
     }
 }
-
-        }
-    }
-}
-
- 
