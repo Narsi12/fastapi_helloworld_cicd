@@ -3,6 +3,7 @@ pipeline {
         imagename = "narsimha2580/jenkinss"
         dockerImage = ''
         containerName = 'my-container'
+        dockerHubCredentials = 'docker-hub-credentials'
     }
 
     agent any
@@ -34,8 +35,8 @@ pipeline {
         stage('Stop and Remove Container') {
             steps {
                 script {
-                    sh "docker stop ${containerName} || true"  // Stop the container, ignoring errors if it's not running
-                    sh "docker rm ${containerName} || true"    // Remove the container, ignoring errors if it doesn't exist
+                    sh "docker stop ${containerName} || true"
+                    sh "docker rm ${containerName} || true"
                 }
             }
         }
@@ -43,11 +44,13 @@ pipeline {
         stage('Deploy Image') {
             steps {
                 script {
-                    // Login to Docker Hub
-                    sh "docker login -u narsimha2580 -p Narsimha123@#\$"
+                    // Use Jenkins credentials for Docker Hub login
+                    withCredentials([usernamePassword(credentialsId: dockerHubCredentials, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
 
-                    // Push the image
-                    sh "docker push ${imagename}:latest"
+                        // Push the image
+                        sh "docker push ${imagename}:latest"
+                    }
                 }
             }
         }
