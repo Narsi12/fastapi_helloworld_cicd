@@ -18,7 +18,9 @@ pipeline {
         stage('Building image') {
             steps {
                 script {
-                    dockerImage = docker.build "${imagename}:latest"
+                    // Use Jenkins build number as the Docker image tag
+                    def imageTag = "${imagename}:${BUILD_NUMBER}"
+                    dockerImage = docker.build imageTag
                 }
             }
         }
@@ -26,7 +28,7 @@ pipeline {
         stage('Running image') {
             steps {
                 script {
-                    sh "docker run -d --name ${containerName} ${imagename}:latest"
+                    sh "docker run -d --name ${containerName} ${dockerImage.id}"
                     // Perform any additional steps needed while the container is running
                 }
             }
@@ -49,7 +51,7 @@ pipeline {
                         sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
 
                         // Push the image
-                        sh "docker push ${imagename}:latest"
+                        sh "docker push ${dockerImage.id}"
                     }
                 }
             }
