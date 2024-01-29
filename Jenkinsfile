@@ -4,6 +4,7 @@ pipeline {
         dockerImage = ''
         containerName = 'my-container'
         dockerHubCredentials = 'docker-hub-credentials'
+        dockerImageTag = "${imagename}:${env.BUILD_NUMBER}"
     }
  
     agent any
@@ -18,7 +19,8 @@ pipeline {
         stage('Building image') {
             steps {
                 script {
-                    dockerImage = docker.build "${imagename}:latest"
+                    dockerImageTag = "${imagename}:${env.BUILD_NUMBER}"
+                    dockerImage = docker.build dockerImageTag
                 }
             }
         }
@@ -26,7 +28,7 @@ pipeline {
         stage('Running image') {
             steps {
                 script {
-                    sh "docker run -d --name ${containerName} ${imagename}:latest"
+                    sh "docker run -d --name ${containerName} ${dockerImageTag}"
                     // Perform any additional steps needed while the container is running
                 }
             }
@@ -44,17 +46,14 @@ pipeline {
         stage('Deploy Image') {
             steps {
                 script {
-                    // Use Jenkins credentials for Docker Hub login
                     withCredentials([usernamePassword(credentialsId: dockerHubCredentials, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
- 
-                        // Push the image
-                        sh "docker push ${imagename}:latest"
+                        sh "docker push ${dockerImageTag}"
                     }
                 }
             }
         }
-
+ 
         stage('Trigger ManifestUpdate') {
             steps {
                 echo "Triggering updatemanifestjob"
