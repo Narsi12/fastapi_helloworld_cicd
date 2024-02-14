@@ -8,6 +8,10 @@ app = FastAPI()
 def read_root():
     return {"Hello": "World"}
 
+@app.get("/jenkins")
+def read_git():
+    return {"Hello": "jenkins"}
+
 handler = mangum.Mangum(app)
 
 if __name__ == "__main__":
